@@ -7,13 +7,6 @@ namespace TrenRezervasyon.Controllers
     [Route("api/rezervasyon")]
     public class RezervasyonController : ControllerBase
     {
-        private readonly ILogger<RezervasyonController> _logger;
-
-        public RezervasyonController(ILogger<RezervasyonController> logger)
-        {
-            _logger = logger;
-        }
-
         [HttpPost]
         public IActionResult RezervasyonYap([FromBody] RezervasyonIstegi istek)
         {
@@ -48,7 +41,7 @@ namespace TrenRezervasyon.Controllers
                         }
                     }
                 }
-                if (rezervasyonSonucu.YerlesimAyrinti.Sum(y => y.KisiSayisi) != rezervasyonKisiSayisi)
+                if (rezervasyonKisiSayisi > 0)
                 {
                     rezervasyonSonucu.RezervasyonYapilabilir = false;
                 }
