@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using TrenRezervasyon.Model;
 
 namespace TrenRezervasyon.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/rezervasyon")]
     public class RezervasyonController : ControllerBase
     {
         [HttpPost]
@@ -20,15 +21,15 @@ namespace TrenRezervasyon.Controllers
                 YerlesimAyrinti = new List<YerlesimAyrinti>()
             };
 
-            if(kisilerFarkliVagonlaraYerlestirilebilir)
+            if (kisilerFarkliVagonlaraYerlestirilebilir)
             {
                 foreach (var vagon in tren.Vagonlar)
                 {
-                    if (rezervasyonYapilacakKisiSayisi > 0 )
+                    if (rezervasyonYapilacakKisiSayisi > 0)
                     {
                         int bosKoltukAdet = vagon.Kapasite * 70 / 100 - vagon.DoluKoltukAdet;
                         int kisiSayisi = Math.Min(rezervasyonYapilacakKisiSayisi, bosKoltukAdet);
-                        if(kisiSayisi > 0)
+                        if (kisiSayisi > 0)
                         {
                             rezervasyonSonucu.YerlesimAyrinti.Add(new YerlesimAyrinti
                             {
@@ -73,3 +74,4 @@ namespace TrenRezervasyon.Controllers
         }
     }
 }
+
