@@ -11,7 +11,7 @@ namespace TrenRezervasyon.Controllers
         public IActionResult RezervasyonYap([FromBody] RezervasyonIstegi istek)
         {
             Tren tren = istek.Tren;
-            int rezervasyonKisiSayisi = istek.RezervasyonYapilacakKisiSayisi;
+            int rezervasyonYapilacakKisiSayisi = istek.RezervasyonYapilacakKisiSayisi;
             bool kisilerFarkliVagonlaraYerlestirilebilir = istek.KisilerFarkliVagonlaraYerlestirilebilir;
 
             var rezervasyonSonucu = new RezervasyonSonucu
@@ -24,10 +24,10 @@ namespace TrenRezervasyon.Controllers
             {
                 foreach (var vagon in tren.Vagonlar)
                 {
-                    if (rezervasyonKisiSayisi > 0 )
+                    if (rezervasyonYapilacakKisiSayisi > 0 )
                     {
-                        int bosKoltukSayisi = vagon.Kapasite * 70 / 100 - vagon.DoluKoltukAdet;
-                        int kisiSayisi = Math.Min(rezervasyonKisiSayisi, bosKoltukSayisi);
+                        int bosKoltukAdet = vagon.Kapasite * 70 / 100 - vagon.DoluKoltukAdet;
+                        int kisiSayisi = Math.Min(rezervasyonYapilacakKisiSayisi, bosKoltukAdet);
                         if(kisiSayisi > 0)
                         {
                             rezervasyonSonucu.YerlesimAyrinti.Add(new YerlesimAyrinti
@@ -37,11 +37,11 @@ namespace TrenRezervasyon.Controllers
                             });
 
                             vagon.DoluKoltukAdet += kisiSayisi;
-                            rezervasyonKisiSayisi -= kisiSayisi;
+                            rezervasyonYapilacakKisiSayisi -= kisiSayisi;
                         }
                     }
                 }
-                if (rezervasyonKisiSayisi > 0)
+                if (rezervasyonYapilacakKisiSayisi > 0)
                 {
                     rezervasyonSonucu.RezervasyonYapilabilir = false;
                 }
@@ -50,23 +50,21 @@ namespace TrenRezervasyon.Controllers
             {
                 foreach (var vagon in tren.Vagonlar)
                 {
-                    if (((double)(vagon.DoluKoltukAdet + rezervasyonKisiSayisi) / vagon.Kapasite) <= 0.7)
+                    if (((double)(vagon.DoluKoltukAdet + rezervasyonYapilacakKisiSayisi) / vagon.Kapasite) <= 0.7)
                     {
-                        int kisiSayisi = Math.Min(rezervasyonKisiSayisi, vagon.Kapasite - vagon.DoluKoltukAdet);
+                        int kisiSayisi = Math.Min(rezervasyonYapilacakKisiSayisi, vagon.Kapasite - vagon.DoluKoltukAdet);
                         rezervasyonSonucu.YerlesimAyrinti.Add(new YerlesimAyrinti
                         {
                             VagonAdi = vagon.Ad,
                             KisiSayisi = kisiSayisi
                         });
                         vagon.DoluKoltukAdet += kisiSayisi;
-
-                        rezervasyonKisiSayisi -= kisiSayisi;
-
-                        if (rezervasyonKisiSayisi == 0)
+                        rezervasyonYapilacakKisiSayisi -= kisiSayisi;
+                        if (rezervasyonYapilacakKisiSayisi == 0)
                             break;
                     }
                 }
-                if (rezervasyonKisiSayisi > 0)
+                if (rezervasyonYapilacakKisiSayisi > 0)
                 {
                     rezervasyonSonucu.RezervasyonYapilabilir = false;
                 }
